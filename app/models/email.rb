@@ -4,12 +4,16 @@ class Email
   attr_accessor :subject, :body, :to, :cc, :bcc
   attr_reader :errors
 
-  def initialize(parameters)
+  def initialize(parameters = {})
     @errors = Set.new
 
     parameters.each do |key, value|
       instance_variable_set("@#{key}", value) unless value.nil?
     end
+
+    # Initiliazing subject and body to empty strings
+    self.subject ||= ""
+    self.body ||= ""
 
     # Ensuring email.recipients is always an array
     self.to = Array(self.to)
@@ -31,11 +35,11 @@ class Email
       next if response.blank?
 
       # Return on first success, else retry with another service_provider
-      return {status: "sent_mail"} if response[:status] == "sent_mail"
+      return true if response[:status] == "sent_mail"
     end
 
     # Return error if email could not be sent with any service provider
-    return {status: "error"}
+    return false
   end
 
   private

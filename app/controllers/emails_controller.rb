@@ -9,12 +9,18 @@ class EmailsController < ApplicationController
                errors: []
              },
              status: :ok
-    else
+    elsif @email.errors.present?
       render json: {
                 status: "error",
                 errors: @email.errors
              },
              status: :unprocessable_entity
+    else
+      render json: {
+                status: "error",
+                errors: ["service_unavailable"]
+             },
+             status: :service_unavailable
     end
   end
 
