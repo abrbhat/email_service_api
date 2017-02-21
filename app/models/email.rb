@@ -1,24 +1,40 @@
 class Email
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
 
-  attr_accessor :subject, :body, :to, :cc, :bcc
+  attr_accessor :subject, :body, :recipients, :attachments
   attr_reader :errors
+
+  @@status_list = %w{not_sent sent queued rejected}
 
   def initialize(parameters = {})
     @errors = Set.new
 
-    parameters.each do |key, value|
-      instance_variable_set("@#{key}", value) unless value.nil?
+    # Initiliazing defaults
+    self.subject = parameters[:subject] || ""
+    self.body = parameters[:body] || ""
+    self.attachments = Array(parameters[:attachments])
+    self.recipients = []
+
+    [:to, :cc, :bcc].each do |attribute|
+      Array(parameters[attribute]).each do |recipient_email_id|
+        self.recipients <<
+          if recipient_email_id =~ VALID_EMAIL_REGEX
+            {
+              email_id: recipient_email_id,
+              type: attribute.to_s,
+              status: "not_sent",
+              error: nil
+            }
+          else
+            {
+              email_id: recipient_email_id,
+              type: attribute.to_s,
+              status: "rejected",
+              error: "invalid_email_id"
+            }
+          end
+      end
     end
-
-    # Initiliazing subject and body to empty strings
-    self.subject ||= ""
-    self.body ||= ""
-
-    # Ensuring email.recipients is always an array
-    self.to = Array(self.to)
-    self.cc = Array(self.cc)
-    self.bcc = Array(self.bcc)
   end
 
   def dispatch
@@ -30,32 +46,32 @@ class Email
 
     # Try sending the email with each service provider one by one
     service_providers.each do |service_provider|
-      response = "ServiceProvider::#{service_provider}".constantize.send_email(self)
+      "ServiceProvider::#{service_provider}".constantize.send_email(self)
 
-      next if response.blank?
-
-      # Return on first success, else retry with another service_provider
-      return true if response[:status] == "sent"
+      # Return true if there are no more recipients to whom mail has not been sent
+      return true if self.not_sent_to_recipients.blank?
     end
 
-    # Return error if email could not be sent with any service provider
     return false
+  end
+
+  def not_sent_to_recipients
+    self.recipients.select{|recipient| recipient[:status] == "not_sent"}
   end
 
   private
 
-  def recipients
-    self.to + self.cc + self.bcc
-  end
-
   def is_valid?
     if recipients.blank?
       self.errors << "no_recipient_present"
-      return false
-    elsif (invalid_emails = recipients
-                            .reject{|recipient| recipient =~ VALID_EMAIL_REGEX}
-          ).present?
-      self.errors << "invalid_emails:#{invalid_emails.join(",")}"
+    elsif subject.blank?
+      self.errors << "no_subject_present"
+    elsif body.blank?
+      self.errors << "no_body_present"
+    end
+
+    if self.errors.present?
+      self.status = "error"
       return false
     end
 

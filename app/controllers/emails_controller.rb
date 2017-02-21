@@ -4,20 +4,16 @@ class EmailsController < ApplicationController
 
     if @email.dispatch
       render json: {
-               status: "sent_email_successfully",
-               email: @email,
-               errors: []
+               status: @email.recipients
              },
              status: :ok
     elsif @email.errors.present?
       render json: {
-                status: "error",
                 errors: @email.errors
              },
              status: :unprocessable_entity
     else
       render json: {
-                status: "error",
                 errors: ["service_unavailable"]
              },
              status: :service_unavailable
@@ -34,7 +30,8 @@ class EmailsController < ApplicationController
       :body,
       :to => [],
       :cc => [],
-      :bcc => []
+      :bcc => [],
+      :attachments => []
     )
   end
 end
