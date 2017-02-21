@@ -1,17 +1,18 @@
-class EmailController < ApplicationController
+class EmailsController < ApplicationController
   def send_email
-    email = Email.new(email_params)
-    
-    if email.dispatch
+    @email = Email.new(email_params)
+
+    if @email.dispatch
       render json: {
                status: "sent_email_successfully",
+               email: @email,
                errors: []
              },
              status: :ok
     else
       render json: {
                 status: "error",
-                errors: email.errors
+                errors: @email.errors
              },
              status: :unprocessable_entity
     end
