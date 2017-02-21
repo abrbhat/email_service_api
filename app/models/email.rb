@@ -30,12 +30,12 @@ class Email
 
     # Try sending the email with each service provider one by one
     service_providers.each do |service_provider|
-      response = "ServiceProvider::#{service_provider}".constantize.send(self)
+      response = "ServiceProvider::#{service_provider}".constantize.send_email(self)
 
       next if response.blank?
 
       # Return on first success, else retry with another service_provider
-      return true if response[:status] == "sent_mail"
+      return true if response[:status] == "sent"
     end
 
     # Return error if email could not be sent with any service provider

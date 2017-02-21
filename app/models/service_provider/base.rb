@@ -4,7 +4,7 @@ module ServiceProvider
       'AmazonSES',
       'Mailgun',
       'SendGrid',
-      'Mandrill'
+      'MandrillAPI'
     ]
 
     def self.list

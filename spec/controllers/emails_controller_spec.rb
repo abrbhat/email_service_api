@@ -26,6 +26,14 @@ RSpec.describe EmailsController, type: :controller do
   # EmailsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
+  before do
+    allow(ServiceProvider::Base).to receive(:list)
+                                .and_return(["Mailgun"])
+
+    allow(ServiceProvider::Mailgun).to receive(:send_email)
+                                   .and_return({status: "sent"})
+  end
+
   describe "POST #create" do
     context "with valid params" do
       it "dispatches a new Email" do
@@ -40,6 +48,7 @@ RSpec.describe EmailsController, type: :controller do
         post :send_email,
              params: {email: valid_attributes},
              session: valid_session
+
         expect(response).to have_http_status(:ok)
       end
 
@@ -84,6 +93,21 @@ RSpec.describe EmailsController, type: :controller do
              session: valid_session
 
         expect(json["errors"]).to be_present
+      end
+    end
+
+    context "no api available" do
+      before do
+        allow(ServiceProvider::Mailgun).to receive(:send_email)
+                                       .and_return({status: "error"})
+      end
+
+      it "should return service_unavailable status code" do
+        post :send_email,
+             params: {email: valid_attributes},
+             session: valid_session
+
+        expect(response).to have_http_status(:service_unavailable)
       end
     end
   end

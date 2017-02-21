@@ -63,21 +63,21 @@ RSpec.describe Email, type: :model do
       end
 
       it "should call service provider" do
-        expect(ServiceProvider::Mailgun).to receive(:send)
+        expect(ServiceProvider::Mailgun).to receive(:send_email)
 
         Email.new(valid_parameters).dispatch
       end
 
       it "should return true if service provider is returns a success response" do
-        expect(ServiceProvider::Mailgun).to receive(:send)
-                                        .and_return({status: 'sent_mail'})
+        expect(ServiceProvider::Mailgun).to receive(:send_email)
+                                        .and_return({status: 'sent'})
 
         expect(Email.new(valid_parameters).dispatch).to eq true
       end
 
       it "should return false if service provider does not return a success" +
          " response" do
-        expect(ServiceProvider::Mailgun).to receive(:send)
+        expect(ServiceProvider::Mailgun).to receive(:send_email)
                                         .and_return({status: 'error'})
 
         expect(Email.new(valid_parameters).dispatch).to eq false

@@ -1,7 +1,7 @@
 module ServiceProvider
   class Mailgun < ServiceProvider::Base
-    def self.send(email)
-      return {status: "sent_mail"}      
+    def self.send_email(email)
+      return {status: "error"}
     end
   end
 end
