@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Emails", type: :request do  
+RSpec.describe "Emails", type: :request do
   let(:json){ JSON.parse(response.body) }
 
   let(:valid_attributes) {
@@ -24,14 +24,14 @@ RSpec.describe "Emails", type: :request do
     context "service is available" do
       context "valid params" do
         it "should return response with a status code of 200" do
-          post emails_path,
+          post v1_emails_path,
                params: {:email => valid_attributes}
 
           expect(response).to have_http_status(200)
         end
 
         it "should return status of emails" do
-          post emails_path,
+          post v1_emails_path,
                params: {:email => valid_attributes}
 
           recipient_emails = valid_attributes[:to] +
@@ -46,14 +46,14 @@ RSpec.describe "Emails", type: :request do
 
       context "invalid params" do
         it "should return response with a status code of 422" do
-          post emails_path,
+          post v1_emails_path,
                params: {:email => invalid_attributes}
 
           expect(response).to have_http_status(422)
         end
 
         it "should return errors in email" do
-          post emails_path,
+          post v1_emails_path,
                params: {:email => invalid_attributes}
 
           expect(json["errors"]).to be_present
@@ -72,7 +72,7 @@ RSpec.describe "Emails", type: :request do
       end
 
       it "should return response with a status code of 503" do
-        post emails_path,
+        post v1_emails_path,
              params: {:email => valid_attributes}
 
         expect(response).to have_http_status(503)
