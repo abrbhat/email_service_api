@@ -1,8 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Emails", type: :request do
-  include_context "mock service providers"
-  
+RSpec.describe "Emails", type: :request do  
   let(:json){ JSON.parse(response.body) }
 
   let(:valid_attributes) {

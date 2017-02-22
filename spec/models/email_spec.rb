@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Email, type: :model do
-  include_context "mock service providers"
-
   describe "initialization" do
     it "assign the subject and body parameters to the object attributes" do
       email_parameters = {
@@ -83,23 +81,15 @@ RSpec.describe Email, type: :model do
     end
 
     context "valid email" do
-      it "should call service provider" do
-        expect(ServiceProvider::MandrillAPI).to receive(:send_email)
-
-        Email.new(valid_parameters).dispatch
-      end
-
       it "should return true if service provider processes all email succcessfully" do
         expect(Email.new(valid_parameters).dispatch).to eq true
       end
 
       it "should return false if service provider does not return a success" +
          " response" do
-        # Overriding send email to successfully process emails without calling
-        # the third-party api
-        class << ServiceProvider::MandrillAPI
-          def send_email(email)
-            email.recipients.map{|r| r[:status] = "not_sent"}
+        class MandrillMessages
+          def send(*args)
+            raise Mandrill::Error.new
           end
         end
 
