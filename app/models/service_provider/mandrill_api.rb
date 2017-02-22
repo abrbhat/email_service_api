@@ -22,7 +22,7 @@ module ServiceProvider
 
         async = false
         result = mandrill.messages.send message, async
-
+        
         result.sort_by{|delivery_status| delivery_status["email"]}
               .zip(
                 email.not_sent_to_recipients
@@ -36,7 +36,7 @@ module ServiceProvider
               end
           end
         end
-        
+
         return {status: "processed"}
       rescue Mandrill::Error => e
         return {status: "error", error: e}

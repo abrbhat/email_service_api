@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe "Emails", type: :request do
+  include_context "mock service providers"
+  
   let(:json){ JSON.parse(response.body) }
 
   let(:valid_attributes) {
@@ -64,7 +66,7 @@ RSpec.describe "Emails", type: :request do
       before do
         # Overriding send email to unsuccessfully process emails without calling
         # the third-party api
-        class << ServiceProvider::Mailgun
+        class << ServiceProvider::MandrillAPI
           def send_email(email)
             email.recipients.map{|r| r[:status] = "not_sent"}
           end
