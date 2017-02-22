@@ -1,7 +1,7 @@
 class Email
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
 
-  attr_accessor :subject, :body, :recipients, :attachments
+  attr_accessor :subject, :body, :recipients, :attachments, :status
   attr_reader :errors
 
   @@status_list = %w{not_sent sent queued rejected}
@@ -47,7 +47,7 @@ class Email
     # Try sending the email with each service provider one by one
     service_providers.each do |service_provider|
       "ServiceProvider::#{service_provider}".constantize.send_email(self)
-
+      
       # Return true if there are no more recipients to whom mail has not been sent
       return true if self.not_sent_to_recipients.blank?
     end

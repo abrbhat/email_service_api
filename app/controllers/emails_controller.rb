@@ -1,7 +1,7 @@
 class EmailsController < ApplicationController
   def send_email
     @email = Email.new(email_params)
-
+    
     if @email.dispatch
       render json: {
                status: @email.recipients

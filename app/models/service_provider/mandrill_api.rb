@@ -36,7 +36,7 @@ module ServiceProvider
               end
           end
         end
-        byebug
+        
         return {status: "processed"}
       rescue Mandrill::Error => e
         return {status: "error", error: e}
