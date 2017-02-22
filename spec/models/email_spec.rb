@@ -97,9 +97,7 @@ RSpec.describe Email, type: :model do
       it "should return false if service provider does not return a success" +
          " response" do
         class MandrillMessages
-          def send(*args)
-            raise Mandrill::Error.new
-          end
+          alias_method :send, :error_send
         end
 
         expect(Email.new(valid_parameters).dispatch).to eq false

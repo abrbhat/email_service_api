@@ -122,12 +122,8 @@ RSpec.describe "Emails", type: :request do
       end
       context "service is unavailable" do
         before do
-          # Overriding send email to unsuccessfully process emails without calling
-          # the third-party api
-          class << ServiceProvider::MandrillAPI
-            def send_email(email)
-              email.recipients.map{|r| r[:status] = "not_sent"}
-            end
+          class MandrillMessages
+            alias_method :send, :unsuccessful_send
           end
         end
 

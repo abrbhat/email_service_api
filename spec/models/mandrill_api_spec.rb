@@ -26,9 +26,7 @@ RSpec.describe ServiceProvider::MandrillAPI, type: :model do
   context "mandrill executes request unsuccessfully" do
     before do
       class MandrillMessages
-        def send(*args)
-          raise Mandrill::Error.new
-        end
+        alias_method :send, :error_send
       end
     end
 
