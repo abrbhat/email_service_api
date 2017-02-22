@@ -1,4 +1,5 @@
 require 'mandrill'
+require 'base64'
 
 module ServiceProvider
   class MandrillAPI < ServiceProvider::Base
@@ -12,17 +13,26 @@ module ServiceProvider
             "email" => recipient[:email_id]
           }
         end
+        
+        attachments = email.attachments.map do |attachment|
+          {
+            content: Base64.encode64(IO.binread(attachment.path)),
+            name: attachment.original_filename,
+            type: attachment.content_type
+          }
+        end
 
         message = {
           "subject" => email.subject,
           "html" => email.body,
           "from_email" => ENV['SENDER_EMAIL'],
-          "to" => recipients
+          "to" => recipients,
+          "attachments" => attachments
         }
 
         async = false
         result = mandrill.messages.send message, async
-        
+
         result.sort_by{|delivery_status| delivery_status["email"]}
               .zip(
                 email.not_sent_to_recipients

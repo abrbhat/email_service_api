@@ -5,8 +5,7 @@ RSpec.describe ServiceProvider::MandrillAPI, type: :model do
     @email = Email.new({
       subject: "Hi",
       body: "Hi there",
-      to: ["alice@example.com"],
-      attachments: []
+      to: ["alice@example.com"]
     })
   end
 
