@@ -15,8 +15,14 @@ class Email
     self.attachments = Array(parameters[:attachments])
     self.recipients = []
 
+    recorded_recipients = Set.new
+
     [:to, :cc, :bcc].each do |attribute|
       Array(parameters[attribute]).each do |recipient_email_id|
+        # Checking for duplicate emails
+        next if recipient_email_id.in? recorded_recipients
+        recorded_recipients << recipient_email_id
+
         self.recipients <<
           if recipient_email_id =~ VALID_EMAIL_REGEX
             {

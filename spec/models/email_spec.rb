@@ -61,6 +61,15 @@ RSpec.describe Email, type: :model do
       expect(email.recipients).to eq([])
       expect(email.attachments).to eq([])
     end
+
+    it "removes duplicate email ids" do
+      email = Email.new(
+        to: ["alice@example.com", "alice@example.com"],
+        cc: ["alice@example.com"]
+      )
+
+      expect(email.recipients.length).to eq(1)
+    end
   end
 
   describe "dispatch" do
