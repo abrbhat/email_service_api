@@ -47,7 +47,7 @@ class Email
     # Try sending the email with each service provider one by one
     service_providers.each do |service_provider|
       "ServiceProvider::#{service_provider}".constantize.send_email(self)
-      
+
       # Return true if there are no more recipients to whom mail has not been sent
       return true if self.not_sent_to_recipients.blank?
     end
@@ -58,8 +58,6 @@ class Email
   def not_sent_to_recipients
     self.recipients.select{|recipient| recipient[:status] == "not_sent"}
   end
-
-  private
 
   def is_valid?
     if recipients.blank?
@@ -77,4 +75,7 @@ class Email
 
     return true
   end
+
+  private
+
 end

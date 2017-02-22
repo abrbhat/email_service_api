@@ -21,23 +21,7 @@ RSpec.describe "Emails", type: :request do
   }
 
   describe "POST /api/emails" do
-    before do
-      # Overriding list of service providers to include only mailgun
-      allow(ServiceProvider::Base).to receive(:list)
-                                  .and_return(["Mailgun"])
-    end
-
     context "service is available" do
-      before do
-        # Overriding send email to successfully process emails without calling
-        # the third-party api
-        class << ServiceProvider::Mailgun
-          def send_email(email)
-            email.recipients.map{|r| r[:status] = "sent"}
-          end
-        end
-      end
-
       context "valid params" do
         it "should return response with a status code of 200" do
           post emails_path,
