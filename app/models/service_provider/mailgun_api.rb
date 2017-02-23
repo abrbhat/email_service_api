@@ -21,7 +21,7 @@ module ServiceProvider
           end
         end
 
-        mb_obj.subject("#{email.subject} (mailgun)");
+        mb_obj.subject(email.subject);
 
         mb_obj.body_text(email.body);
 
@@ -35,7 +35,7 @@ module ServiceProvider
 
         if result.code == 200
           delivery_statuses = {}
-          
+
           if ENV['MAILGUN_SANDBOX_ACCOUNT'] == "true"
             ENV['MAILGUN_AUTHORIZED_EMAIL'].split("|").each do |authorized_email|
               delivery_statuses[authorized_email] = "sent"

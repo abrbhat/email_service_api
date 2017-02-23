@@ -23,7 +23,7 @@ module ServiceProvider
         end
 
         message = {
-          "subject" => "#{email.subject} (mandrill)",
+          "subject" => email.subject,
           "html" => email.body,
           "from_email" => ENV['MANDRILL_SENDER_EMAIL'],
           "to" => recipients,
