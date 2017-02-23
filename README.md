@@ -21,27 +21,143 @@ as short as possible
 * Battle-hardened in production-level deployments
 
 # API Documentation
+The appl
 
 ## Endpoints
-All endpoints exist within the /api/v1 namespace currently.
 
 ### /api/v1/emails
 
 ### POST /api/v1/emails
 
-#### Parameters
+#### Query Parameters
 
-| Parameter     | Type                | Required     |
-| ------------- | --------------------|--------------|
-| subject       | Text                | yes          |
-| body          | Text                | yes          |
-| to            | Array of email_ids  | no           |
-| cc            | Array of email_ids  | no           |
-| bcc           | Array of email_ids  | no           |
-| attachments   | Array of files      | no           |
+| Parameter          | Type                | Required     |
+| ------------------ | --------------------|--------------|
+| api_key            | Text                | yes          |
+| email[subject]     | Text                | yes          |
+| email[body]        | Text                | yes          |
+| email[to]          | Array of email_ids  | no           |
+| email[cc]          | Array of email_ids  | no           |
+| email[bcc]         | Array of email_ids  | no           |
+| email[attachments] | Array of files      | no           |
 
 Note: Parameters to, cc and bcc are individually optional but at least one email
 id should be present in at least one of the parameters
+
+#### Responses
+
+##### HTTP Status: 200
+Email has been processed successfully. Response contains delivery status for individual
+recipients.
+
+###### Example
+
+Query:
+
+```
+curl -X POST \
+     -H "Content-Type: multipart/form-data;" \
+     -F "email[subject]=Hi There" \
+     -F "email[to][]=bhatnagarabhiroop@gmail.com" \
+     -F "email[body]=Just messaging to say hi" \
+     -F "api_key=api_key_1" \
+     "http://localhost:3000/api/v1/emails"
+```
+
+Response:
+
+```
+{
+  "status": [
+    {
+      "email_id": "test@example.com",
+      "type": "to",
+      "status": "sent",
+      "error": null
+    }
+  ]
+}
+```
+
+##### HTTP Status: 401
+Incorrect or invalid API key provided
+
+###### Example
+
+Query:
+
+```
+curl -X POST \
+     -H "Content-Type: multipart/form-data;" \
+     -F "email[subject]=Hi There" \
+     -F "email[to][]=bhatnagarabhiroop@gmail.com" \
+     -F "email[body]=Just messaging to say hi" \
+     -F "api_key=any_random_string" \
+     "http://localhost:3000/api/v1/emails"
+```
+
+Response:
+
+```
+{
+  "errors": [
+    "invalid_api_key"
+  ]
+}
+```
+
+##### HTTP Status: 422
+Error in query
+
+###### Example
+
+Query:
+
+```
+curl -X POST \
+     -H "Content-Type: multipart/form-data;" \
+     -F "email[subject]=Hi There" \
+     -F "email[body]=Just messaging to say hi" \
+     -F "api_key=api_key_1" \
+     "http://localhost:3000/api/v1/emails"
+```
+
+Response:
+
+```
+{
+  "errors": [
+    "no_recipient_present"
+  ]
+}
+```
+
+##### HTTP Status: 503
+Email could not be sent with any of the providers
+
+###### Example
+
+Query:
+
+```
+curl -X POST \
+     -H "Content-Type: multipart/form-data;" \
+     -F "email[subject]=Hi There" \
+     -F "email[body]=Just messaging to say hi" \
+     -F "email[to][]=bhatnagarabhiroop@gmail.com" \
+     -F "api_key=api_key_1" \
+     "http://localhost:3000/api/v1/emails"
+```
+
+Response:
+
+```
+{
+  "errors": [
+    "service_unavailable"
+  ]
+}
+```
 
 # Run
 ```
