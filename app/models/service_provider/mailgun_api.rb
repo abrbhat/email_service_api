@@ -9,7 +9,11 @@ module ServiceProvider
 
           mb_obj.from(ENV['MAILGUN_SENDER_EMAIL'])
 
-          mb_obj.add_recipient(:to, ENV['MAILGUN_AUTHORIZED_EMAIL'])
+          # Allows multiple authorized email separated by |
+          # Example: "test1@example.com|test2@example.com"
+          ENV['MAILGUN_AUTHORIZED_EMAIL'].split("|").each do |authorized_email|
+            mb_obj.add_recipient(:to, email)
+          end
 
           mb_obj.subject("#{email.subject} (mailgun)");
 

@@ -13,6 +13,8 @@ class V1::EmailsController < ApplicationController
              },
              status: :unprocessable_entity
     else
+      # If email could not be dispatched despite it having no errors, this means
+      # the service providers must be unable to send mail
       render json: {
                 errors: ["service_unavailable"]
              },
