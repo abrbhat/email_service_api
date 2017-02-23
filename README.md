@@ -67,7 +67,7 @@ curl -X POST \
      -F "email[to][]=bhatnagarabhiroop@gmail.com" \
      -F "email[body]=Just messaging to say hi" \
      -F "api_key=api_key_1" \
-     "http://localhost:3000/api/v1/emails"
+     "http://email-service-api-73686.com/api/v1/emails"
 ```
 
 Response:
@@ -99,7 +99,7 @@ curl -X POST \
      -F "email[to][]=bhatnagarabhiroop@gmail.com" \
      -F "email[body]=Just messaging to say hi" \
      -F "api_key=any_random_string" \
-     "http://localhost:3000/api/v1/emails"
+     "http://email-service-api-73686.com/api/v1/emails"
 ```
 
 Response:
@@ -125,7 +125,7 @@ curl -X POST \
      -F "email[subject]=Hi There" \
      -F "email[body]=Just messaging to say hi" \
      -F "api_key=api_key_1" \
-     "http://localhost:3000/api/v1/emails"
+     "http://email-service-api-73686.com/api/v1/emails"
 ```
 
 Response:
@@ -152,7 +152,7 @@ curl -X POST \
      -F "email[body]=Just messaging to say hi" \
      -F "email[to][]=bhatnagarabhiroop@gmail.com" \
      -F "api_key=api_key_1" \
-     "http://localhost:3000/api/v1/emails"
+     "http://email-service-api-73686.com/api/v1/emails"
 ```
 
 Response:
