@@ -33,19 +33,19 @@ module ServiceProvider
         async = false
         result = mandrill.messages.send message, async
 
-        result.sort_by{|delivery_status| delivery_status["email"]}
-              .zip(
-                email.not_sent_to_recipients
-                .sort_by{|recipient| recipient[:email_id]}
-              ).each do |delivery_status, recipient|
-          if delivery_status["email"] == recipient[:email_id]
-            recipient[:status] =
-              case delivery_status["status"]
-              when /sent|queued|rejected/
-                delivery_status["status"]
-              end
-          end
+        delivery_statuses = {}
+
+        result.each do |delivery_status|
+          delivery_statuses[delivery_status["email"]] =
+            case delivery_status["status"]
+            when /sent|queued|rejected/
+              delivery_status["status"]
+            else
+              "not_sent"
+            end
         end
+
+        email.update_delivery_statuses(delivery_statuses)
 
         return {status: "processed"}
       rescue Mandrill::Error => e
