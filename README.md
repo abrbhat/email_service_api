@@ -10,14 +10,15 @@ The solution focuses on the *Back-end Track*.
 # Technical Stack Deployed
 
 ## Ruby on Rails 5 (API mode)
-* Extremely solid framework for building production-ready apps in a short amount of time
+* Solid framework for building production-ready apps in a short amount of time
 * Routing DSL is well-suited for RESTful interactions
 * Has a wide variety of gems to handle various functionalities while keeping things DRY
 * Rails 5 provides API mode which loads only selective middleware, keeping the response times
 as short as possible
+* Easily testability through RSpec
 
 ## Postgres
-* Most advanced relational database
+* Advanced relational database
 * Battle-hardened in production-level deployments
 
 # API Documentation
@@ -40,8 +41,8 @@ as short as possible
 | email[bcc]         | Array of email ids  | no           |
 | email[attachments] | Array of files      | no           |
 
-Note: Parameters to, cc and bcc are individually optional but at least one email
-id should be present in at least one of the parameters
+*Note*: Parameters "to", "cc" and "bcc" are individually optional but at least one email
+id should be present in at least one of these parameters
 
 #### Responses
 
@@ -66,7 +67,7 @@ curl -X POST \
      -F "email[to][]=test@example.com" \
      -F "email[body]=Just messaging to say hi" \
      -F "api_key=your_api_key" \
-     "http://email-service-api-73686.com/api/v1/emails"
+     "https://email-service-api-73686.herokuapp.com/api/v1/emails"
 ```
 
 Response:
@@ -98,7 +99,7 @@ curl -X POST \
      -F "email[to][]=test@example.com" \
      -F "email[body]=Just messaging to say hi" \
      -F "api_key=any_random_string" \
-     "http://email-service-api-73686.com/api/v1/emails"
+     "https://email-service-api-73686.herokuapp.com/api/v1/emails"
 ```
 
 Response:
@@ -124,7 +125,7 @@ curl -X POST \
      -F "email[subject]=Hi There" \
      -F "email[body]=Just messaging to say hi" \
      -F "api_key=your_api_key" \
-     "http://email-service-api-73686.com/api/v1/emails"
+     "https://email-service-api-73686.herokuapp.com/api/v1/emails"
 ```
 
 Response:
@@ -151,7 +152,7 @@ curl -X POST \
      -F "email[body]=Just messaging to say hi" \
      -F "email[to][]=test@example.com" \
      -F "api_key=your_api_key" \
-     "http://email-service-api-73686.com/api/v1/emails"
+     "https://email-service-api-73686.herokuapp.com/api/v1/emails"
 ```
 
 Response:
