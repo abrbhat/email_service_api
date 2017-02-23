@@ -23,8 +23,25 @@ as short as possible
 # API Documentation
 
 ## Endpoints
+All endpoints exist within the /api/v1 namespace currently.
+
+### /api/v1/emails
 
 ### POST /api/v1/emails
+
+#### Parameters
+
+| Parameter     | Type                | Required     |
+| ------------- | --------------------|--------------|
+| subject       | Text                | yes          |
+| body          | Text                | yes          |
+| to            | Array of email_ids  | no           |
+| cc            | Array of email_ids  | no           |
+| bcc           | Array of email_ids  | no           |
+| attachments   | Array of files      | no           |
+
+Note: Parameters to, cc and bcc are individually optional but at least one email
+id should be present in at least one of the parameters
 
 # Run
 ```
@@ -42,10 +59,13 @@ requirements since the API will involve extensive file-uploading and external AP
 * Express is very light-weight and since there is only a single endpoint, there is no need
 of the extensive routing that Rails provides.
 * The system requires a database just to check if the API key belongs to a valid account. This functionality can be easily achieved by an in-memory database like Redis. Using Redis would cut down further on the response time.
+
 # Link to other code
 http://github.com/abrbhat/customer-support
+
 # Link to profile
 http://github.com/abrbhat
 https://www.linkedin.com/in/abhiroopbhatnagar/
+
 # Hosted at Heroku
 https://email-service-api-73686.herokuapp.com/
