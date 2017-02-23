@@ -121,11 +121,7 @@ RSpec.describe "Emails", type: :request do
         end
       end
       context "service is unavailable" do
-        before do
-          class MandrillMessages
-            alias_method :send, :unsuccessful_send
-          end
-        end
+        include_context "mandrill send unsuccessful"
 
         it "should return response with a status code of 503" do
           post v1_emails_path,

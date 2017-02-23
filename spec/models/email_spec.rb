@@ -94,13 +94,13 @@ RSpec.describe Email, type: :model do
         expect(Email.new(valid_parameters).dispatch).to eq true
       end
 
-      it "should return false if service provider does not return a success" +
-         " response" do
-        class MandrillMessages
-          alias_method :send, :error_send
-        end
+      context "unsuccessful response" do
+        include_context "mandrill send error"
 
-        expect(Email.new(valid_parameters).dispatch).to eq false
+        it "should return false if service provider does not return a success" +
+           " response" do
+          expect(Email.new(valid_parameters).dispatch).to eq false
+        end
       end
     end
   end
