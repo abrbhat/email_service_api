@@ -8,18 +8,24 @@ providers through a failover mechanism.
 The solution focuses on the *Back-end Track*.
 
 # Technical Stack Deployed
+
 ## Ruby on Rails 5 (API mode)
 * Extremely solid framework for building production-ready apps in a short amount of time
 * Routing DSL is well-suited for RESTful interactions
 * Has a wide variety of gems to handle various functionalities while keeping things DRY
 * Rails 5 provides API mode which loads only selective middleware, keeping the response times
 as short as possible
+
 ## Postgres
 * Most advanced relational database
 * Battle-hardened in production-level deployments
+
 # API Documentation
+
 ## Endpoints
+
 ### POST /api/v1/emails
+
 # Run
 ```
 bundle install
