@@ -21,7 +21,6 @@ as short as possible
 * Battle-hardened in production-level deployments
 
 # API Documentation
-The appl
 
 ## Endpoints
 
@@ -36,9 +35,9 @@ The appl
 | api_key            | Text                | yes          |
 | email[subject]     | Text                | yes          |
 | email[body]        | Text                | yes          |
-| email[to]          | Array of email_ids  | no           |
-| email[cc]          | Array of email_ids  | no           |
-| email[bcc]         | Array of email_ids  | no           |
+| email[to]          | Array of email ids  | no           |
+| email[cc]          | Array of email ids  | no           |
+| email[bcc]         | Array of email ids  | no           |
 | email[attachments] | Array of files      | no           |
 
 Note: Parameters to, cc and bcc are individually optional but at least one email
@@ -51,10 +50,10 @@ Email has been processed successfully. Response contains delivery status for ind
 recipients.
 
 Possible values of delivery status for a recipient:
-* sent: Email has been sent to recipient
-* queued: Email has been queued for delivery
-* not_sent: Email could not be sent to recipient
-* rejected: Email was rejected. `error` key will contain reason for rejection.
+* "sent": Email has been sent to recipient
+* "queued": Email has been queued for delivery
+* "not_sent": Email could not be sent to recipient
+* "rejected": Email was rejected. `error` key will contain reason for rejection.
 
 ###### Example
 
@@ -86,7 +85,7 @@ Response:
 ```
 
 ##### HTTP Status: 401
-Incorrect or invalid API key provided
+Most possible reason: Incorrect or invalid API key provided
 
 ###### Example
 
@@ -113,7 +112,7 @@ Response:
 ```
 
 ##### HTTP Status: 422
-Invalid Email
+Most possible reason: Invalid Email
 
 ###### Example
 
@@ -139,7 +138,7 @@ Response:
 ```
 
 ##### HTTP Status: 503
-Email could not be sent with any of the providers
+Most possible reason: Email could not be sent with any of the providers
 
 ###### Example
 
