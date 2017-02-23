@@ -64,9 +64,9 @@ Query:
 curl -X POST \
      -H "Content-Type: multipart/form-data;" \
      -F "email[subject]=Hi There" \
-     -F "email[to][]=bhatnagarabhiroop@gmail.com" \
+     -F "email[to][]=test@example.com" \
      -F "email[body]=Just messaging to say hi" \
-     -F "api_key=api_key_1" \
+     -F "api_key=your_api_key" \
      "http://email-service-api-73686.com/api/v1/emails"
 ```
 
@@ -96,7 +96,7 @@ Query:
 curl -X POST \
      -H "Content-Type: multipart/form-data;" \
      -F "email[subject]=Hi There" \
-     -F "email[to][]=bhatnagarabhiroop@gmail.com" \
+     -F "email[to][]=test@example.com" \
      -F "email[body]=Just messaging to say hi" \
      -F "api_key=any_random_string" \
      "http://email-service-api-73686.com/api/v1/emails"
@@ -124,7 +124,7 @@ curl -X POST \
      -H "Content-Type: multipart/form-data;" \
      -F "email[subject]=Hi There" \
      -F "email[body]=Just messaging to say hi" \
-     -F "api_key=api_key_1" \
+     -F "api_key=your_api_key" \
      "http://email-service-api-73686.com/api/v1/emails"
 ```
 
@@ -150,8 +150,8 @@ curl -X POST \
      -H "Content-Type: multipart/form-data;" \
      -F "email[subject]=Hi There" \
      -F "email[body]=Just messaging to say hi" \
-     -F "email[to][]=bhatnagarabhiroop@gmail.com" \
-     -F "api_key=api_key_1" \
+     -F "email[to][]=test@example.com" \
+     -F "api_key=your_api_key" \
      "http://email-service-api-73686.com/api/v1/emails"
 ```
 
