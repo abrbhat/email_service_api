@@ -9,10 +9,16 @@ module ServiceProvider
 
         mb_obj.from(ENV['MAILGUN_SENDER_EMAIL'])
 
-        # Allows multiple authorized email separated by |
-        # Example: "test1@example.com|test2@example.com"
-        ENV['MAILGUN_AUTHORIZED_EMAIL'].split("|").each do |authorized_email|
-          mb_obj.add_recipient(:to, authorized_email)
+        if ENV['MAILGUN_SANDBOX_ACCOUNT'] == "true"
+          # Allows multiple authorized email separated by |
+          # Example: "test1@example.com|test2@example.com"
+          ENV['MAILGUN_AUTHORIZED_EMAIL'].split("|").each do |authorized_email|
+            mb_obj.add_recipient(:to, authorized_email)
+          end
+        else
+          email.not_sent_to_recipients.each do |recipient|
+            mb_obj.add_recipient(recipient[:type].to_sym, recipient[:email_id])
+          end
         end
 
         mb_obj.subject("#{email.subject} (mailgun)");
@@ -28,9 +34,19 @@ module ServiceProvider
                                         mb_obj
 
         if result.code == 200
-          email.update_delivery_statuses({
-            ENV['MAILGUN_AUTHORIZED_EMAIL'] => "sent"
-          })
+          delivery_statuses = {}
+          
+          if ENV['MAILGUN_SANDBOX_ACCOUNT'] == "true"
+            ENV['MAILGUN_AUTHORIZED_EMAIL'].split("|").each do |authorized_email|
+              delivery_statuses[authorized_email] = "sent"
+            end
+          else
+            email.not_sent_to_recipients.each do |recipient|
+              delivery_statuses[recipient[:email_id]] = "sent"
+            end
+          end
+
+          email.update_delivery_statuses(delivery_statuses)
 
           return {status: "processed"}
         else

@@ -9,7 +9,7 @@ module ServiceProvider
 
         recipients = email.not_sent_to_recipients.map do |recipient|
           {
-            "type" => recipient[:type].to_s,
+            "type" => recipient[:type],
             "email" => recipient[:email_id]
           }
         end

@@ -1,9 +1,10 @@
 # Problem
-Create a service that accepts the necessary information and sends emails. It should provide an abstraction between two different email service providers. If one of the services goes down, your service can quickly failover to a different provider without affecting your customers.
+Create a service that accepts the necessary information and sends emails. It should provide an abstraction between two different email service providers. If one of the services goes down, the service can quickly failover to a different provider without affecting the customers.
 
 # Solution
 A RESTful API built with Ruby on Rails and Postgres. The API interacts with various
-providers through a failover mechanism.
+providers through a failover mechanism. The API has been integrated with Mandrill
+and Mailgun. Stubs have been provided for Amazon SES and Sendgrid.
 
 The solution focuses on the *Back-end Track*.
 
