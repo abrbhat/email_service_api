@@ -1,6 +1,6 @@
-module ServiceProvider
-  require 'mailgun'
+require 'mailgun'
 
+module ServiceProvider
   class MailgunAPI < ServiceProvider::Base
     def self.send_email(email)
       begin
