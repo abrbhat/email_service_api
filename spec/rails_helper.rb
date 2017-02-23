@@ -7,6 +7,7 @@ require 'spec_helper'
 require 'rspec/rails'
 
 require 'mandrill'
+require 'mailgun'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 

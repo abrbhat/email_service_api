@@ -2,7 +2,7 @@ module ServiceProvider
   class Base
     @@list = [
       'AmazonSES',
-      'Mailgun',
+      'MailgunAPI',
       'SendGrid',
       'MandrillAPI'
     ]

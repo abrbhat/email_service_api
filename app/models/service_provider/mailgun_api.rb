@@ -1,7 +1,7 @@
 module ServiceProvider
   require 'mailgun'
 
-  class Mailgun < ServiceProvider::Base
+  class MailgunAPI < ServiceProvider::Base
     def self.send_email(email)
         begin
           mg_client = ::Mailgun::Client.new ENV['MAILGUN_API_KEY']
@@ -9,14 +9,14 @@ module ServiceProvider
 
           mb_obj.from(ENV['MAILGUN_SENDER_EMAIL'])
 
-          mb_obj.add_recipient(:to, "bhatnagarabhiroop@gmail.com")
+          mb_obj.add_recipient(:to, ENV['MAILGUN_AUTHORIZED_EMAIL'])
 
           mb_obj.subject("#{email.subject} (mailgun)");
 
           mb_obj.body_text(email.body);
 
           email.attachments.each do |attachment|
-
+            #TODO
           end
 
           # Send your message through the client
@@ -25,9 +25,14 @@ module ServiceProvider
 
           if result.code == 200
             email.update_delivery_statuses({
-              "bhatnagarabhiroop@gmail.com" => "sent"
+              ENV['MAILGUN_AUTHORIZED_EMAIL'] => "sent"
             })
+
+            return {status: "processed"}
+          else
+            return {status: "error"}
           end
+
         rescue ::Mailgun::Error => e
           return {status: "error", error: e}
         end
