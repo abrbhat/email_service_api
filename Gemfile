@@ -14,6 +14,7 @@ gem 'pg'
 gem 'puma', '~> 3.0'
 
 gem 'mandrill-api'
+gem 'mailgun-ruby', '~>1.1.4'
 
 gem 'figaro'
 

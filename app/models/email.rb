@@ -61,6 +61,14 @@ class Email
     return false
   end
 
+  def update_delivery_statuses(delivery_statuses = {})
+    self.recipients.each do |recipient|
+      if delivery_statuses.has_key? recipient[:email_id]
+        recipient[:status] = delivery_statuses[recipient[:email_id]]
+      end
+    end
+  end
+
   def not_sent_to_recipients
     self.recipients.select{|recipient| recipient[:status] == "not_sent"}
   end

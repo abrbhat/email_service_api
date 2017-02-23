@@ -13,7 +13,7 @@ module ServiceProvider
             "email" => recipient[:email_id]
           }
         end
-        
+
         attachments = email.attachments.map do |attachment|
           {
             content: Base64.encode64(IO.binread(attachment.path)),
@@ -23,9 +23,9 @@ module ServiceProvider
         end
 
         message = {
-          "subject" => email.subject,
+          "subject" => "#{email.subject} (mandrill)",
           "html" => email.body,
-          "from_email" => ENV['SENDER_EMAIL'],
+          "from_email" => ENV['MANDRILL_SENDER_EMAIL'],
           "to" => recipients,
           "attachments" => attachments
         }
