@@ -26,7 +26,7 @@ module ServiceProvider
         # Send your message through the client
         result = mg_client.send_message ENV['MAILGUN_SENDER_EMAIL'].split('@')[1],
                                         mb_obj
-        
+
         if result.code == 200
           email.update_delivery_statuses({
             ENV['MAILGUN_AUTHORIZED_EMAIL'] => "sent"
@@ -37,8 +37,10 @@ module ServiceProvider
           return {status: "error"}
         end
 
-      rescue ::Mailgun::Error => e
-        return {status: "error", error: e}
+      rescue ::Mailgun::Error => error
+        Rails.logger.error "mailgun_error: #{error.inspect}"
+
+        return {status: "error", error: error}
       end
     end
   end

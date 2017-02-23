@@ -48,8 +48,10 @@ module ServiceProvider
         email.update_delivery_statuses(delivery_statuses)
 
         return {status: "processed"}
-      rescue Mandrill::Error => e
-        return {status: "error", error: e}
+      rescue Mandrill::Error => error
+        Rails.logger.error "mandrill_error: #{error.inspect}"
+
+        return {status: "error", error: error}
       end
     end
   end
