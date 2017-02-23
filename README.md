@@ -50,6 +50,12 @@ id should be present in at least one of the parameters
 Email has been processed successfully. Response contains delivery status for individual
 recipients.
 
+Possible values of delivery status for a recipient:
+* sent: Email has been sent to recipient
+* queued: Email has been queued for delivery
+* not_sent: Email could not be sent to recipient
+* rejected: Email was rejected. `error` key will contain reason for rejection.
+
 ###### Example
 
 Query:
@@ -107,7 +113,7 @@ Response:
 ```
 
 ##### HTTP Status: 422
-Error in query
+Invalid Email
 
 ###### Example
 
