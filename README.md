@@ -64,7 +64,8 @@ Query:
 curl -X POST \
      -H "Content-Type: multipart/form-data;" \
      -F "email[subject]=Hi There" \
-     -F "email[to][]=test@example.com" \
+     -F "email[to][]=test1@example.com" \
+     -F "email[to][]=test2@example.com" \
      -F "email[body]=Just messaging to say hi" \
      -F "api_key=your_api_key" \
      "https://email-service-api-73686.herokuapp.com/api/v1/emails"
@@ -76,7 +77,13 @@ Response:
 {
   "status": [
     {
-      "email_id": "test@example.com",
+      "email_id": "test1@example.com",
+      "type": "to",
+      "status": "sent",
+      "error": null
+    },
+    {
+      "email_id": "test2@example.com",
       "type": "to",
       "status": "sent",
       "error": null
