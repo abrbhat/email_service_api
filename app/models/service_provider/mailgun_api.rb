@@ -12,7 +12,11 @@ module ServiceProvider
         if ENV['MAILGUN_SANDBOX_ACCOUNT'] == "true"
           # Allows multiple authorized email separated by |
           # Example: "test1@example.com|test2@example.com"
-          ENV['MAILGUN_AUTHORIZED_EMAIL'].split("|").each do |authorized_email|
+
+          authorized_recipients = ENV['MAILGUN_AUTHORIZED_EMAIL'].split("|") &
+                                   email.not_sent_to_recipients.map{|e| e[:email_id]}
+
+          authorized_recipients.each do |authorized_email|
             mb_obj.add_recipient(:to, authorized_email)
           end
         else
@@ -37,7 +41,7 @@ module ServiceProvider
           delivery_statuses = {}
 
           if ENV['MAILGUN_SANDBOX_ACCOUNT'] == "true"
-            ENV['MAILGUN_AUTHORIZED_EMAIL'].split("|").each do |authorized_email|
+            authorized_recipients.each do |authorized_email|
               delivery_statuses[authorized_email] = "sent"
             end
           else
