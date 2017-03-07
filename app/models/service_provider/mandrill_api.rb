@@ -2,57 +2,65 @@ require 'mandrill'
 require 'base64'
 
 module ServiceProvider
+  # MandrillAPI service provider
   class MandrillAPI < ServiceProvider::Base
     def self.send_email(email)
-      begin
-        mandrill = Mandrill::API.new ENV['MANDRILL_API_KEY']
+      mandrill = Mandrill::API.new ENV['MANDRILL_API_KEY']
 
-        recipients = email.not_sent_to_recipients.map do |recipient|
-          {
-            "type" => recipient[:type],
-            "email" => recipient[:email_id]
-          }
-        end
+      result = mandrill.messages.send contruct_message(email), false
 
-        attachments = email.attachments.map do |attachment|
-          {
-            content: Base64.encode64(IO.binread(attachment.path)),
-            name: attachment.original_filename,
-            type: attachment.content_type
-          }
-        end
+      delivery_statuses = get_delivery_statuses(result)
 
-        message = {
-          "subject" => email.subject,
-          "html" => email.body,
-          "from_email" => ENV['MANDRILL_SENDER_EMAIL'],
-          "to" => recipients,
-          "attachments" => attachments
-        }
+      email.update_delivery_statuses(delivery_statuses)
 
-        async = false
-        result = mandrill.messages.send message, async
+      { status: 'processed' }
+    rescue Mandrill::Error => error
+      Rails.logger.error "mandrill_error: #{error.inspect}"
 
-        delivery_statuses = {}
+      { status: 'error', error: error }
+    end
 
-        result.each do |delivery_status|
-          delivery_statuses[delivery_status["email"]] =
-            case delivery_status["status"]
-            when /sent|queued|rejected/
-              delivery_status["status"]
-            else
-              "not_sent"
-            end
-        end
+    def self.get_delivery_statuses(result)
+      delivery_statuses = {}
 
-        email.update_delivery_statuses(delivery_statuses)
-
-        {status: "processed"}
-      rescue Mandrill::Error => error
-        Rails.logger.error "mandrill_error: #{error.inspect}"
-
-        {status: "error", error: error}
+      result.each do |delivery_status|
+        delivery_statuses[delivery_status['email']] =
+          case delivery_status['status']
+          when /sent|queued|rejected/ then delivery_status['status']
+          else 'not_sent'
+          end
       end
+
+      delivery_statuses
+    end
+
+    def self.get_recipients(email)
+      email.not_sent_to_recipients.map do |recipient|
+        {
+          'type' => recipient[:type],
+          'email' => recipient[:email_id]
+        }
+      end
+    end
+
+    def self.get_attachments(email)
+      email.attachments.map do |attachment|
+        {
+          content: Base64.encode64(IO.binread(attachment.path)),
+          name: attachment.original_filename,
+          type: attachment.content_type
+        }
+      end
+    end
+
+    def self.contruct_message(email)
+      {
+        'subject' => email.subject,
+        'html' => email.body,
+        'from_email' => ENV['MANDRILL_SENDER_EMAIL'],
+        'to' => get_recipients(email),
+        'attachments' => get_attachments(email)
+      }
     end
   end
 end
