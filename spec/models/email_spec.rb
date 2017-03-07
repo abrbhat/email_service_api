@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Email, type: :model do
-  describe "initialization" do
-    it "assign the subject and body parameters to the object attributes" do
+  describe 'initialization' do
+    it 'assign the subject and body parameters to the object attributes' do
       email_parameters = {
-        subject: "Hi there",
-        body: "How are you?"
+        subject: 'Hi there',
+        body: 'How are you?'
       }
 
       email = Email.new(email_parameters)
@@ -14,13 +14,13 @@ RSpec.describe Email, type: :model do
       expect(email.body).to eq(email_parameters[:body])
     end
 
-    it "creates status objects for recipients" do
+    it 'creates status objects for recipients' do
       email_parameters = {
-        subject: "Hi there",
-        body: "How are you?",
-        to: ["alice@example.com"],
-        cc: ["bob@example.com"],
-        bcc: "trudy@example.com"
+        subject: 'Hi there',
+        body: 'How are you?',
+        to: ['alice@example.com'],
+        cc: ['bob@example.com'],
+        bcc: 'trudy@example.com'
       }
 
       email = Email.new(email_parameters)
@@ -31,150 +31,150 @@ RSpec.describe Email, type: :model do
 
       expect(email.recipients.length).to eq 3
       expect(email.recipients.map{|r| r[:email_id]} - recipient_emails).to eq []
-      expect(email.recipients.map{|r| r[:status]}.uniq).to eq ["not_sent"]
+      expect(email.recipients.map{|r| r[:status]}.uniq).to eq ['not_sent']
     end
 
-    it "creates sets rejected in status objects for invalid emails" do
+    it 'creates sets rejected in status objects for invalid emails' do
       email_parameters = {
-        subject: "Hi there",
-        body: "How are you?",
-        to: ["alice_no_email"],
+        subject: 'Hi there',
+        body: 'How are you?',
+        to: ['alice_no_email'],
       }
 
       email = Email.new(email_parameters)
 
       expect(email.recipients.length).to eq 1
-      expect(email.recipients[0][:status]).to eq "rejected"
-      expect(email.recipients[0][:error]).to eq "invalid_email_id"
+      expect(email.recipients[0][:status]).to eq 'rejected'
+      expect(email.recipients[0][:error]).to eq 'invalid_email_id'
     end
 
-    it "initializes subject and body to an empty string if none present" do
+    it 'initializes subject and body to an empty string if none present' do
       email = Email.new()
 
-      expect(email.subject).to eq("")
-      expect(email.body).to eq("")
+      expect(email.subject).to eq('')
+      expect(email.body).to eq('')
     end
 
-    it "initializes recipients and attachments to arrays if not already arrays" do
+    it 'initializes recipients and attachments to arrays if not already arrays' do
       email = Email.new()
 
       expect(email.recipients).to eq([])
       expect(email.attachments).to eq([])
     end
 
-    it "removes duplicate email ids" do
+    it 'removes duplicate email ids' do
       email = Email.new(
-        to: ["alice@example.com", "alice@example.com"],
-        cc: ["alice@example.com"]
+        to: ['alice@example.com', 'alice@example.com'],
+        cc: ['alice@example.com']
       )
 
       expect(email.recipients.length).to eq(1)
     end
   end
 
-  describe "dispatch" do
+  describe 'dispatch' do
     let(:valid_parameters){
       {
-        subject: "Hi Alice",
-        body: "Just saying hi.",
-        to: ["alice@example.com"]
+        subject: 'Hi Alice',
+        body: 'Just saying hi.',
+        to: ['alice@example.com']
       }
     }
 
-    context "invalid email" do
-      it "should return false" do
+    context 'invalid email' do
+      it 'should return false' do
         email = Email.new()
 
         expect(email.dispatch).to eq false
       end
     end
 
-    context "valid email" do
-      it "should return true if service provider processes all email succcessfully" do
+    context 'valid email' do
+      it 'should return true if service provider processes all email succcessfully' do
         expect(Email.new(valid_parameters).dispatch).to eq true
       end
 
-      context "unsuccessful response" do
-        include_context "mandrill send error"
+      context 'unsuccessful response' do
+        include_context 'mandrill send error'
 
-        it "should return false if service provider does not return a success" +
-           " response" do
+        it 'should return false if service provider does not return a success' +
+           ' response' do
           expect(Email.new(valid_parameters).dispatch).to eq false
         end
       end
     end
   end
 
-  describe "is_valid?" do
-    context "no recipients present" do
+  describe 'valid?' do
+    context 'no recipients present' do
       before do
         @email = Email.new({
-          subject: "Hi",
-          body: "Hi there."
+          subject: 'Hi',
+          body: 'Hi there.'
         })
       end
 
-      it "returns false" do
-        expect(@email.is_valid?).to eq false
+      it 'returns false' do
+        expect(@email.valid?).to eq false
       end
 
-      it "should add error to email" do
-        @email.is_valid?
+      it 'should add error to email' do
+        @email.valid?
 
         expect(@email.errors.count).to eq 1
-        expect(@email.errors.to_a[0]).to eq "no_recipient_present"
+        expect(@email.errors.to_a[0]).to eq 'no_recipient_present'
       end
     end
 
-    context "subject is not present" do
+    context 'subject is not present' do
       before do
         @email = Email.new({
-          body: "Hi there.",
-          to: "alice@example.com"
+          body: 'Hi there.',
+          to: 'alice@example.com'
         })
       end
 
-      it "returns false" do
-        expect(@email.is_valid?).to eq false
+      it 'returns false' do
+        expect(@email.valid?).to eq false
       end
 
-      it "should add error to email" do
-        @email.is_valid?
+      it 'should add error to email' do
+        @email.valid?
 
         expect(@email.errors.count).to eq 1
-        expect(@email.errors.to_a[0]).to eq "no_subject_present"
+        expect(@email.errors.to_a[0]).to eq 'no_subject_present'
       end
     end
 
-    context "body is not present" do
+    context 'body is not present' do
       before do
         @email = Email.new({
-          subject: "Hi",
-          to: "alice@example.com"
+          subject: 'Hi',
+          to: 'alice@example.com'
         })
       end
 
-      it "returns false" do
-        expect(@email.is_valid?).to eq false
+      it 'returns false' do
+        expect(@email.valid?).to eq false
       end
 
-      it "should add error to email" do
-        @email.is_valid?
+      it 'should add error to email' do
+        @email.valid?
 
         expect(@email.errors.count).to eq 1
-        expect(@email.errors.to_a[0]).to eq "no_body_present"
+        expect(@email.errors.to_a[0]).to eq 'no_body_present'
       end
     end
 
-    context "email is valid" do
-      it "returns true if email is valid" do
+    context 'email is valid' do
+      it 'returns true if email is valid' do
         email = Email.new({
-          subject: "Hi",
-          body: "Hi there!",
-          to: "alice@example.com"
+          subject: 'Hi',
+          body: 'Hi there!',
+          to: 'alice@example.com'
         })
 
-        expect(email.is_valid?).to eq true
+        expect(email.valid?).to eq true
       end
     end
   end
