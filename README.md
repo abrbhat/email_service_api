@@ -176,6 +176,7 @@ Response:
 # Run
 ```
 bundle install
+rake db:setup
 rails server
 ```
 # Test
