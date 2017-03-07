@@ -1,5 +1,5 @@
 class V1::EmailsController < ApplicationController
-  def send_email
+  def create
     @email = Email.new(email_params)
 
     if @email.dispatch

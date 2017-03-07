@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   scope '/api', defaults: {format: :json} do
     namespace :v1 do
-      post 'emails', to: 'emails#send_email'
+      post 'emails', to: 'emails#create'
     end
   end
 
