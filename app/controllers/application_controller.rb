@@ -1,3 +1,4 @@
+# Base controller
 class ApplicationController < ActionController::API
   before_action :check_if_api_key_is_valid
 
@@ -7,17 +8,27 @@ class ApplicationController < ActionController::API
     account = Account.where(api_key: params[:api_key]).first
 
     if params[:api_key].blank?
-      render json: {
-               errors: ["no_api_key_present"]
-             },
-             status: :unauthorized
+      render_no_api_key_present
+
       return
     elsif account.blank?
-      render json: {
-               errors: ["invalid_api_key"]
-             },
-             status: :unauthorized
+      render_invalid_api_key_present
+
       return
     end
+  end
+
+  private
+
+  def render_no_api_key_present
+    render json: {
+      errors: ['no_api_key_present']
+    }, status: :unauthorized
+  end
+
+  def render_invalid_api_key_present
+    render json: {
+      errors: ['invalid_api_key']
+    }, status: :unauthorized
   end
 end

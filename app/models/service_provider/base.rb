@@ -1,14 +1,16 @@
+# Service provider module
 module ServiceProvider
+  # Base class for service provider
   class Base
-    @@list = [
-      'AmazonSES',
-      'MailgunAPI',
-      'SendGrid',
-      'MandrillAPI'
-    ]
+    @list = %w(
+      AmazonSES
+      MailgunAPI
+      SendGrid
+      MandrillAPI
+    )
 
-    def self.list
-      @@list
+    class << self
+      attr_reader :list
     end
   end
 end
