@@ -1,7 +1,7 @@
 module ServiceProvider
   class AmazonSES < ServiceProvider::Base
     def self.send_email(email)
-      return {status: "error"}
+      {status: "error"}
     end
   end
 end

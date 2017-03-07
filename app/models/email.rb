@@ -58,7 +58,7 @@ class Email
       return true if self.not_sent_to_recipients.blank?
     end
 
-    return false
+    false
   end
 
   def update_delivery_statuses(delivery_statuses = {})
@@ -87,7 +87,7 @@ class Email
       return false
     end
 
-    return true
+    true
   end
 
   private
