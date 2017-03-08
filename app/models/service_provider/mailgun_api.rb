@@ -3,7 +3,7 @@ require 'mailgun'
 module ServiceProvider
   # Mailgun API declaration
   class MailgunAPI < ServiceProvider::Base
-    def self.send_email(email)
+    def send_email(email)
       mailgun_client = ::Mailgun::Client.new ENV['MAILGUN_API_KEY']
 
       # Send your message through the client
@@ -19,11 +19,13 @@ module ServiceProvider
       { status: 'error', error: error }
     end
 
-    def self.sandbox?
+    private
+
+    def sandbox?
       ENV['MAILGUN_SANDBOX_ACCOUNT'] == 'true'
     end
 
-    def self.handle_result(result, email)
+    def handle_result(result, email)
       if result.code == 200
         handle_sent_success(email)
 
@@ -33,7 +35,7 @@ module ServiceProvider
       end
     end
 
-    def self.construct_mailgun_message(email)
+    def construct_mailgun_message(email)
       mailgun_message = ::Mailgun::MessageBuilder.new
 
       mailgun_message.from(ENV['MAILGUN_SENDER_EMAIL'])
@@ -49,7 +51,7 @@ module ServiceProvider
       mailgun_message
     end
 
-    def self.handle_sent_success(email)
+    def handle_sent_success(email)
       delivery_statuses =
         if sandbox?
           get_delivery_statuses_for_sandbox(email, delivery_statuses)
@@ -60,7 +62,7 @@ module ServiceProvider
       email.update_delivery_statuses(delivery_statuses)
     end
 
-    def self.get_delivery_statuses_for_sandbox(email, delivery_statuses)
+    def get_delivery_statuses_for_sandbox(email, delivery_statuses)
       delivery_statuses = {}
 
       present_authorized_recipients(email).each do |authorized_email|
@@ -70,7 +72,7 @@ module ServiceProvider
       delivery_statuses
     end
 
-    def self.get_delivery_statuses_for_production(email)
+    def get_delivery_statuses_for_production(email)
       delivery_statuses = {}
 
       email.not_sent_to_recipients.each do |recipient|
@@ -80,7 +82,7 @@ module ServiceProvider
       delivery_statuses
     end
 
-    def self.add_recipients(mailgun_message, email)
+    def add_recipients(mailgun_message, email)
       if sandbox?
         present_authorized_recipients(email).each do |authorized_email|
           mailgun_message.add_recipient(:to, authorized_email)
@@ -90,7 +92,7 @@ module ServiceProvider
       end
     end
 
-    def self.add_recipients_if_no_sandbox(email)
+    def add_recipients_if_no_sandbox(email)
       email.not_sent_to_recipients.each do |recipient|
         mailgun_message.add_recipient(
           recipient[:type].to_sym,
@@ -99,7 +101,7 @@ module ServiceProvider
       end
     end
 
-    def self.add_attachments(mailgun_message, email)
+    def add_attachments(mailgun_message, email)
       email.attachments.each do |attachment|
         mailgun_message.add_attachment(
           attachment.path,
@@ -108,13 +110,13 @@ module ServiceProvider
       end
     end
 
-    def self.authorized_recipients
+    def authorized_recipients
       # Allows multiple authorized email separated by |
       # Example: "test1@example.com|test2@example.com"
       ENV['MAILGUN_AUTHORIZED_EMAIL'].split('|')
     end
 
-    def self.present_authorized_recipients(email)
+    def present_authorized_recipients(email)
       (authorized_recipients &
        email.not_sent_to_recipients.map { |e| e[:email_id] })
     end

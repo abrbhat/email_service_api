@@ -4,7 +4,7 @@ require 'base64'
 module ServiceProvider
   # MandrillAPI service provider
   class MandrillAPI < ServiceProvider::Base
-    def self.send_email(email)
+    def send_email(email)
       mandrill = Mandrill::API.new ENV['MANDRILL_API_KEY']
 
       result = mandrill.messages.send contruct_message(email), false
@@ -20,7 +20,9 @@ module ServiceProvider
       { status: 'error', error: error }
     end
 
-    def self.get_delivery_statuses(result)
+    private
+
+    def get_delivery_statuses(result)
       delivery_statuses = {}
 
       result.each do |delivery_status|
@@ -34,7 +36,7 @@ module ServiceProvider
       delivery_statuses
     end
 
-    def self.get_recipients(email)
+    def get_recipients(email)
       email.not_sent_to_recipients.map do |recipient|
         {
           'type' => recipient[:type],
@@ -43,7 +45,7 @@ module ServiceProvider
       end
     end
 
-    def self.get_attachments(email)
+    def get_attachments(email)
       email.attachments.map do |attachment|
         {
           content: Base64.encode64(IO.binread(attachment.path)),
@@ -53,7 +55,7 @@ module ServiceProvider
       end
     end
 
-    def self.contruct_message(email)
+    def contruct_message(email)
       {
         'subject' => email.subject,
         'html' => email.body,
