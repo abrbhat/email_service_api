@@ -1,5 +1,5 @@
 require 'rails_helper'
-
+# rubocop:disable Metrics/BlockLength
 RSpec.describe Email, type: :model do
   describe 'initialization' do
     it 'assign the subject and body parameters to the object attributes' do
@@ -30,15 +30,16 @@ RSpec.describe Email, type: :model do
                          [email_parameters[:bcc]]
 
       expect(email.recipients.length).to eq 3
-      expect(email.recipients.map{|r| r[:email_id]} - recipient_emails).to eq []
-      expect(email.recipients.map{|r| r[:status]}.uniq).to eq ['not_sent']
+      expect(email.recipients.map { |r| r[:email_id] } - recipient_emails)
+        .to eq []
+      expect(email.recipients.map { |r| r[:status] }.uniq).to eq ['not_sent']
     end
 
     it 'creates sets rejected in status objects for invalid emails' do
       email_parameters = {
         subject: 'Hi there',
         body: 'How are you?',
-        to: ['alice_no_email'],
+        to: ['alice_no_email']
       }
 
       email = Email.new(email_parameters)
@@ -49,14 +50,15 @@ RSpec.describe Email, type: :model do
     end
 
     it 'initializes subject and body to an empty string if none present' do
-      email = Email.new()
+      email = Email.new
 
       expect(email.subject).to eq('')
       expect(email.body).to eq('')
     end
 
-    it 'initializes recipients and attachments to arrays if not already arrays' do
-      email = Email.new()
+    it 'initializes recipients and attachments to arrays if not already' \
+       ' arrays' do
+      email = Email.new
 
       expect(email.recipients).to eq([])
       expect(email.attachments).to eq([])
@@ -73,31 +75,32 @@ RSpec.describe Email, type: :model do
   end
 
   describe 'dispatch' do
-    let(:valid_parameters){
+    let(:valid_parameters) do
       {
         subject: 'Hi Alice',
         body: 'Just saying hi.',
         to: ['alice@example.com']
       }
-    }
+    end
 
     context 'invalid email' do
       it 'should return false' do
-        email = Email.new()
+        email = Email.new
 
         expect(email.dispatch).to eq false
       end
     end
 
     context 'valid email' do
-      it 'should return true if service provider processes all email succcessfully' do
+      it 'should return true if service provider processes all email' \
+         ' succcessfully' do
         expect(Email.new(valid_parameters).dispatch).to eq true
       end
 
       context 'unsuccessful response' do
         include_context 'mandrill send error'
 
-        it 'should return false if service provider does not return a success' +
+        it 'should return false if service provider does not return a success' \
            ' response' do
           expect(Email.new(valid_parameters).dispatch).to eq false
         end
@@ -108,10 +111,10 @@ RSpec.describe Email, type: :model do
   describe 'valid?' do
     context 'no recipients present' do
       before do
-        @email = Email.new({
+        @email = Email.new(
           subject: 'Hi',
           body: 'Hi there.'
-        })
+        )
       end
 
       it 'returns false' do
@@ -128,10 +131,10 @@ RSpec.describe Email, type: :model do
 
     context 'subject is not present' do
       before do
-        @email = Email.new({
+        @email = Email.new(
           body: 'Hi there.',
           to: 'alice@example.com'
-        })
+        )
       end
 
       it 'returns false' do
@@ -148,10 +151,10 @@ RSpec.describe Email, type: :model do
 
     context 'body is not present' do
       before do
-        @email = Email.new({
+        @email = Email.new(
           subject: 'Hi',
           to: 'alice@example.com'
-        })
+        )
       end
 
       it 'returns false' do
@@ -168,11 +171,11 @@ RSpec.describe Email, type: :model do
 
     context 'email is valid' do
       it 'returns true if email is valid' do
-        email = Email.new({
+        email = Email.new(
           subject: 'Hi',
           body: 'Hi there!',
           to: 'alice@example.com'
-        })
+        )
 
         expect(email.valid?).to eq true
       end
