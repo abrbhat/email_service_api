@@ -3,11 +3,15 @@ require 'mailgun'
 module ServiceProvider
   # Mailgun API declaration
   class MailgunAPI < ServiceProvider::Base
-    def send_email(email)
-      mailgun_client = ::Mailgun::Client.new ENV['MAILGUN_API_KEY']
+    attr_accessor :client
 
+    def initialize
+      @client = fetch_mailgun_client
+    end
+
+    def send_email(email)
       # Send your message through the client
-      result = mailgun_client.send_message(
+      result = @client.send_message(
         ENV['MAILGUN_SENDER_EMAIL'].split('@')[1],
         construct_mailgun_message(email)
       )
@@ -20,6 +24,10 @@ module ServiceProvider
     end
 
     private
+
+    def fetch_mailgun_client
+      ::Mailgun::Client.new ENV['MAILGUN_API_KEY']
+    end
 
     def sandbox?
       ENV['MAILGUN_SANDBOX_ACCOUNT'] == 'true'
@@ -36,7 +44,7 @@ module ServiceProvider
     end
 
     def construct_mailgun_message(email)
-      mailgun_message = ::Mailgun::MessageBuilder.new
+      mailgun_message = build_mailgun_message
 
       mailgun_message.from(ENV['MAILGUN_SENDER_EMAIL'])
 
@@ -49,6 +57,10 @@ module ServiceProvider
       add_attachments(mailgun_message, email)
 
       mailgun_message
+    end
+
+    def build_mailgun_message
+      ::Mailgun::MessageBuilder.new
     end
 
     def handle_sent_success(email)
