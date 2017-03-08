@@ -1,39 +1,54 @@
-class V1::EmailsController < ApplicationController
-  def create
-    @email = Email.new(email_params)
+module V1
+  # Controller for handling emails
+  class EmailsController < ApplicationController
+    def create
+      @email = Email.new(email_params)
 
-    if @email.dispatch
-      render json: {
-               status: @email.recipients
-             },
-             status: :ok
-    elsif @email.errors.present?
-      render json: {
-                errors: @email.errors
-             },
-             status: :unprocessable_entity
-    else
-      # If email could not be dispatched despite it having no errors, this means
-      # the service providers must be unable to send mail
-      render json: {
-                errors: ["service_unavailable"]
-             },
-             status: :service_unavailable
+      if @email.dispatch
+        render_response_ok
+      elsif @email.errors.present?
+        render_response_errors
+      else
+        # If email could not be dispatched despite it having no errors, this
+        # means the service providers must be unable to send mail
+        render_response_service_unavailable
+      end
     end
-  end
 
-  private
+    private
 
-  def email_params
-    return {} if params[:email].blank?
+    def render_response_ok
+      render(
+        json: { status: @email.recipients },
+        status: :ok
+      )
+    end
 
-    params.require(:email).permit(
-      :subject,
-      :body,
-      :to => [],
-      :cc => [],
-      :bcc => [],
-      :attachments => []
-    )
+    def render_response_errors
+      render(
+        json: { errors: @email.errors },
+        status: :unprocessable_entity
+      )
+    end
+
+    def render_response_service_unavailable
+      render(
+        json: { errors: ['service_unavailable'] },
+        status: :service_unavailable
+      )
+    end
+
+    def email_params
+      return {} if params[:email].blank?
+
+      params.require(:email).permit(
+        :subject,
+        :body,
+        to: [],
+        cc: [],
+        bcc: [],
+        attachments: []
+      )
+    end
   end
 end
