@@ -8,7 +8,7 @@ RSpec.configure do |config|
               {
                 'email' => recipient['email'],
                 'status' => 'sent',
-                '_id' => '4e194c8c05b14a6882bb7a52e1caf50d',
+                '_id' => '1234',
                 'reject_reason' => nil
               }
             end

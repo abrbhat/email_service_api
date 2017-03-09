@@ -1,15 +1,6 @@
 RSpec.configure do |config|
   config.before(:each) do
-    module ServiceProvider
-      # Mock base class for service provider
-      class Base
-        # Use only MandrillAPI for tests
-        def self.list
-          [
-            'MandrillAPI'
-          ]
-        end
-      end
-    end
+    allow(ServiceProvider::Base).to receive(:list)
+      .and_return(['MandrillAPI'])
   end
 end
