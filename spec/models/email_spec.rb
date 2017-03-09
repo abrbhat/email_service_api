@@ -92,17 +92,42 @@ RSpec.describe Email, type: :model do
     end
 
     context 'valid email' do
+      before do
+        @email = Email.new(valid_parameters)
+
+        MockServiceProviderSuccessfulSend = Struct.new('MockServiceProvider') do
+          def send_email(email)
+            email.recipients.each do |recipient|
+              recipient[:status] = 'sent'
+            end
+          end
+        end
+
+        allow(@email).to receive(:get_service_provider)
+          .and_return(MockServiceProviderSuccessfulSend.new)
+      end
+
       it 'should return true if service provider processes all email' \
          ' succcessfully' do
-        expect(Email.new(valid_parameters).dispatch).to eq true
+        expect(@email.dispatch).to eq true
       end
 
       context 'unsuccessful response' do
-        include_context 'mandrill send error'
+        before do
+          @email = Email.new(valid_parameters)
+
+          MockServiceProviderUnsuccessfulSend =
+            Struct.new('MockServiceProvider') do
+              def send_email(_email); end
+            end
+
+          allow(@email).to receive(:get_service_provider)
+            .and_return(MockServiceProviderUnsuccessfulSend.new)
+        end
 
         it 'should return false if service provider does not return a success' \
            ' response' do
-          expect(Email.new(valid_parameters).dispatch).to eq false
+          expect(@email.dispatch).to eq false
         end
       end
     end

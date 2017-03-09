@@ -28,7 +28,7 @@ class Email
 
     # Try sending the email with each service provider one by one
     service_providers.each do |service_provider|
-      "ServiceProvider::#{service_provider}".constantize.new.send_email(self)
+      get_service_provider(service_provider).send_email(self)
 
       # Return true if there are no more recipients to whom mail
       # has not been sent
@@ -72,6 +72,10 @@ class Email
   end
 
   private
+
+  def get_service_provider(service_provider)
+    "ServiceProvider::#{service_provider}".constantize.new
+  end
 
   def add_recipients(parameters)
     recorded_recipients = Set.new

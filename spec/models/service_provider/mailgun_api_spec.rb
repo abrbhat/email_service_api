@@ -1,8 +1,8 @@
 require 'rails_helper'
 # rubocop:disable Metrics/BlockLength
 RSpec.describe ServiceProvider::MailgunAPI, type: :model do
-  let(:mailgun_client) { double(Mailgun::Client) }
-  let(:mailgun_message_builder) do
+  let(:mock_mailgun_client) { double(Mailgun::Client) }
+  let(:mock_mailgun_message_builder) do
     double(
       Mailgun::MessageBuilder,
       from: nil,
@@ -20,10 +20,10 @@ RSpec.describe ServiceProvider::MailgunAPI, type: :model do
 
     @mailgun_api = ServiceProvider::MailgunAPI.new
 
-    @mailgun_api.client = mailgun_client
+    @mailgun_api.client = mock_mailgun_client
 
     allow(@mailgun_api).to receive(:build_mailgun_message)
-      .and_return(mailgun_message_builder)
+      .and_return(mock_mailgun_message_builder)
 
     @email = Email.new(
       subject: 'Hi',
@@ -34,7 +34,7 @@ RSpec.describe ServiceProvider::MailgunAPI, type: :model do
 
   context 'mailgun executes request successfully' do
     before do
-      allow(mailgun_client).to receive(:send_message)
+      allow(mock_mailgun_client).to receive(:send_message)
         .and_return(mock_success_result)
     end
 
@@ -44,29 +44,29 @@ RSpec.describe ServiceProvider::MailgunAPI, type: :model do
       end
 
       it 'should call mailgun_message_builder.from with sender info' do
-        expect(mailgun_message_builder).to receive(:from)
+        expect(mock_mailgun_message_builder).to receive(:from)
           .with('sender@example.com')
       end
 
       it 'should call mailgun_message_builder.add_recipient with recipient' \
          ' info' do
-        expect(mailgun_message_builder).to receive(:add_recipient)
+        expect(mock_mailgun_message_builder).to receive(:add_recipient)
           .with(:to, 'recipient1@example.com')
       end
 
       it 'should call mailgun_message_builder.subject with subject info' do
-        expect(mailgun_message_builder).to receive(:subject)
+        expect(mock_mailgun_message_builder).to receive(:subject)
           .with('Hi')
       end
 
       it 'should call mailgun_message_builder.body_text with body_text info' do
-        expect(mailgun_message_builder).to receive(:body_text)
+        expect(mock_mailgun_message_builder).to receive(:body_text)
           .with('Hi there')
       end
 
-      it 'should call mailgun_client' do
-        expect(mailgun_client).to receive(:send_message)
-          .with('example.com', mailgun_message_builder)
+      it 'should call mock_mailgun_client' do
+        expect(mock_mailgun_client).to receive(:send_message)
+          .with('example.com', mock_mailgun_message_builder)
       end
     end
 
@@ -85,7 +85,7 @@ RSpec.describe ServiceProvider::MailgunAPI, type: :model do
 
   context 'mailgun executes request unsuccessfully' do
     before do
-      allow(mailgun_client).to receive(:send_message)
+      allow(mock_mailgun_client).to receive(:send_message)
         .and_return(mock_failure_result)
 
       @response = @mailgun_api.send_email(@email)
@@ -102,7 +102,7 @@ RSpec.describe ServiceProvider::MailgunAPI, type: :model do
 
   context 'mailgun executes request with an error' do
     before do
-      allow(mailgun_client).to receive(:send_message)
+      allow(mock_mailgun_client).to receive(:send_message)
         .and_raise(Mailgun::Error)
 
       @response = @mailgun_api.send_email(@email)

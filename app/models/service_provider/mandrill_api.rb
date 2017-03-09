@@ -4,10 +4,14 @@ require 'base64'
 module ServiceProvider
   # MandrillAPI service provider
   class MandrillAPI < ServiceProvider::Base
-    def send_email(email)
-      mandrill = Mandrill::API.new ENV['MANDRILL_API_KEY']
+    attr_accessor :client
 
-      result = mandrill.messages.send contruct_message(email), false
+    def initialize
+      @client = fetch_client
+    end
+
+    def send_email(email)
+      result = @client.messages.send contruct_message(email), false
 
       delivery_statuses = get_delivery_statuses(result)
 
@@ -21,6 +25,10 @@ module ServiceProvider
     end
 
     private
+
+    def fetch_client
+      Mandrill::API.new ENV['MANDRILL_API_KEY']
+    end
 
     def get_delivery_statuses(result)
       delivery_statuses = {}
