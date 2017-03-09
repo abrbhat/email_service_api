@@ -17,7 +17,7 @@ module ServiceProvider
       )
 
       handle_result(result, email)
-    rescue ::Mailgun::Error => error
+    rescue Mailgun::Error => error
       Rails.logger.error "mailgun_error: #{error.inspect}"
 
       { status: 'error', error: error }
@@ -26,7 +26,7 @@ module ServiceProvider
     private
 
     def fetch_mailgun_client
-      ::Mailgun::Client.new ENV['MAILGUN_API_KEY']
+      Mailgun::Client.new ENV['MAILGUN_API_KEY']
     end
 
     def sandbox?
@@ -60,7 +60,7 @@ module ServiceProvider
     end
 
     def build_mailgun_message
-      ::Mailgun::MessageBuilder.new
+      Mailgun::MessageBuilder.new
     end
 
     def handle_sent_success(email)
