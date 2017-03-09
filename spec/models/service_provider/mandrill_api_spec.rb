@@ -3,6 +3,25 @@ require 'rails_helper'
 RSpec.describe ServiceProvider::MandrillAPI, type: :model do
   let(:mock_mandrill_client) { double(Mandrill::API) }
 
+  let(:mock_mandrill_message_success) do
+    (
+      Struct.new('Message') do
+        def send(*args)
+          delivery_statuses = args[0]['to'].map do |recipient|
+            {
+              'email' => recipient['email'],
+              'status' => 'sent',
+              '_id' => '1234',
+              'reject_reason' => nil
+            }
+          end
+
+          delivery_statuses
+        end
+      end
+    ).new
+  end
+
   before do
     @mandrill_api = ServiceProvider::MandrillAPI.new
 
@@ -18,7 +37,7 @@ RSpec.describe ServiceProvider::MandrillAPI, type: :model do
   context 'mandrill executes request successfully' do
     before do
       allow(mock_mandrill_client).to receive(:messages)
-        .and_return(@mock_mandrill_message_success)
+        .and_return(mock_mandrill_message_success)
     end
 
     it 'should update email status' do

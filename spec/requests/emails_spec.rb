@@ -72,8 +72,8 @@ RSpec.describe 'Emails', type: :request do
       context 'service is available' do
         context 'valid params' do
           before do
-            allow_any_instance_of(Mandrill::API).to receive(:messages)
-              .and_return(@mock_mandrill_message_success)
+            allow_any_instance_of(Email).to receive(:dispatch)
+              .and_return(true)
           end
 
           it 'should return response with a status code of 200' do
@@ -100,7 +100,6 @@ RSpec.describe 'Emails', type: :request do
             expect(json['status'].length).to eq(3)
             expect(json['status'].map { |r| r['email_id'] } -
               recipient_emails).to eq([])
-            expect(json['status'].map { |r| r['status'] }.uniq).to eq(['sent'])
           end
         end
 
@@ -128,8 +127,8 @@ RSpec.describe 'Emails', type: :request do
       end
       context 'service is unavailable' do
         before do
-          allow_any_instance_of(Mandrill::API).to receive(:messages)
-            .and_raise(Mandrill::Error)
+          allow_any_instance_of(Email).to receive(:dispatch)
+            .and_return(false)
         end
 
         it 'should return response with a status code of 503' do
